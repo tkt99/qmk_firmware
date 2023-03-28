@@ -27,7 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define EE_HANDS
 
 #define QUICK_TAP_TERM_PER_KEY 0
-#define TAPPING_TERM 100
+#define TAPPING_TERM 155
+#define TAPPING_TERM_PER_KEY
 #define TAPPING_TOGGLE 2
 
 #undef RGBLED_NUM

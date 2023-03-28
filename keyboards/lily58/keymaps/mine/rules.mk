@@ -11,6 +11,7 @@ SWAP_HANDS_ENABLE = no      # Enable one-hand typing
 OLED_ENABLE= no 			# OLED display
 EXTRAKEY_ENABLE = yes
 CAPS_WORD_ENABLE = yes
+TAP_DANCE_ENABLE = yes
 
 
 # If you want to change the display of OLED, you need to change here

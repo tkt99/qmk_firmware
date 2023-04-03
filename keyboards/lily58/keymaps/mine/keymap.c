@@ -27,7 +27,9 @@ enum {
     HYPHEN_UNDER,
     L_PBR,
     R_PBR,
-    CTL_CAPS
+    CTL_CAPS,
+    SFT_PIPE
+
 };
 
 typedef enum {
@@ -82,11 +84,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
  [_QWERTY] = LAYOUT(
-  KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    C(KC_D),
+  KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_CAPS,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    TD(EQL_PLUS),
   TD(CTL_CAPS),  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    TD(CT_CLN), KC_ENT,
-  KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_C),  TD(HYPHEN_UNDER),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
-                        KC_LALT, KC_LGUI, LT(_LOWER, KC_SPACE), KC_BSPC, KC_SPACE, TT(_RAISE), TD(DUAL_QUOTES), C(KC_R)
+  TD(SFT_PIPE),  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_C),  C(KC_D),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
+                        KC_LALT, KC_LGUI, LT(_LOWER, KC_MINS), KC_BSPC, KC_SPACE, LT(_RAISE, KC_UNDERSCORE), TD(DUAL_QUOTES), C(KC_R)
+
 ),
 
 
@@ -131,7 +134,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
   _______, TD(DUAL_SLASH), KC_7,   KC_8,   KC_9,  KC_BSPC,                       LSA(KC_LEFT), LSFT(KC_LEFT), LSFT(KC_RIGHT), LSA(KC_RIGHT), _______, _______,
   _______, KC_ENT,  KC_4,   KC_5,   KC_6,  KC_DOT,                        KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT, LALT(KC_RIGHT), TEST_CODE,
-  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, C(KC_EQL), LALT(KC_LEFT), LSG(KC_LEFT), TD(HYPHEN_UNDER), KC_UNDS, LSG(KC_RIGHT), KC_PIPE, _______,
+  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, C(KC_EQL), LALT(KC_LEFT), LSG(KC_LEFT), LSFT(KC_DOWN), LSFT(KC_UP), LSG(KC_RIGHT), _______, _______,
                              C(KC_PLUS), C(KC_MINS), _______,  KC_DELETE,  _______,  _______, LGUI(KC_PLUS), LGUI(KC_MINS) 
                             
 ), 
@@ -237,8 +240,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed && action->state.count && !action->state.finished) {
                 tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
                 tap_code16(tap_hold->tap);
-            break;
             }
+
+            break;
+
+        case TD(SFT_PIPE):  
+
+            action = &tap_dance_actions[TD_INDEX(keycode)];
+
+            if (!record->event.pressed && action->state.count && !action->state.finished) {
+                tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
+                tap_code16(tap_hold->tap);
+            }
+
+            break;
 
 
     }
@@ -448,6 +463,7 @@ tap_dance_action_t tap_dance_actions[] = {
     [CT_CLN] = ACTION_TAP_DANCE_TAP_HOLD(KC_SCLN, KC_COLN),
     [EQL_PLUS] = ACTION_TAP_DANCE_TAP_HOLD(KC_EQL, KC_PLUS),
     [HYPHEN_UNDER] = ACTION_TAP_DANCE_TAP_HOLD(KC_MINS, KC_UNDS),
+    [SFT_PIPE] = ACTION_TAP_DANCE_TAP_HOLD(KC_PIPE, KC_RSFT),
     [L_PBR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, L_finished, L_reset),
     [R_PBR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, R_finished, R_reset),
     [CTL_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, CC_finished, CC_reset),

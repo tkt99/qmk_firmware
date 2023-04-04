@@ -17,7 +17,9 @@ enum custom_keycodes {
     WIN_LEFT,
     WIN_RIGHT,
     WIN_UP,
-    WIN_DOWN
+    WIN_DOWN,
+    MAC,
+    WINDOWS
 };
 
 typedef struct {
@@ -37,7 +39,8 @@ enum {
     L_PBR,
     R_PBR,
     CTL_CAPS,
-    LT_C
+    LT_C,
+    LT_C_WIN,
 
 };
 
@@ -109,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    TD(EQL_PLUS),
   TD(CTL_CAPS),  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    TD(CT_CLN), KC_ENT,
   KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_R),  C(KC_D),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
-                        KC_LALT, KC_LGUI, TD(LT_C), KC_BSPC, KC_SPACE, LT(_RAISE, KC_MINS), TD(DUAL_QUOTES), KC_M
+                        KC_LALT, KC_LGUI, TD(LT_C), KC_BSPC, KC_SPACE, LT(_RAISE, KC_MINS), TD(DUAL_QUOTES), MAC
 
 ),
  [_QWERTY_WIN] = LAYOUT(
@@ -117,7 +120,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    TD(EQL_PLUS),
   TD(CTL_CAPS),  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    TD(CT_CLN), KC_ENT,
   KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_R),  C(KC_D),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
-                        KC_LALT, KC_LGUI, TD(LT_C), KC_BSPC, KC_SPACE, LT(_RAISE_WIN, KC_MINS), TD(DUAL_QUOTES), KC_W
+                        KC_LALT, KC_LGUI, TD(LT_C_WIN), KC_BSPC, KC_SPACE, LT(_RAISE_WIN, KC_MINS), TD(DUAL_QUOTES), WINDOWS 
 
 ),
 
@@ -221,70 +224,36 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 uint8_t mod_state;
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // if (!process_repeat_key(keycode, record, AREPEAT)) { return false; }
+
+    // MACROS
     if (record -> event.pressed) {
        switch (keycode) {
 
-           case TEST_CODE:
-               SEND_STRING(SS_LCTL("j") SS_DELAY(50) SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER));
-               break;
+        // Common
+        case MAC: SEND_STRING("MAC" SS_DELAY(500) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC)); break;
+        case WINDOWS: SEND_STRING("WINDOWS" SS_DELAY(300) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) ); break;
+        case TEST_CODE: SEND_STRING(SS_LCTL("j") SS_DELAY(50) SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER)); break;
+        case PREV_CMD: SEND_STRING(SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER)); break;
+        case VIM_COPY_REG: SEND_STRING("\"" SS_DELAY(10) "a" SS_DELAY(10) "y"); break;
+        case VIM_PASTE_REG: SEND_STRING("\"" SS_DELAY(10) "a" SS_DELAY(10) "p"); break;
 
-           case PREV_CMD:
-               SEND_STRING(SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER));
-               break;
+        // MAC
+        case LINE_COPY: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(50) SS_TAP(X_LEFT) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_RIGHT) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) "c" SS_DELAY(50) SS_UP(X_LGUI)); break;
+        case LINE_DEL: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(50) SS_TAP(X_LEFT) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_RIGHT) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) "c" SS_DELAY(50) SS_TAP(X_BSPC) SS_DELAY(50) SS_UP(X_LGUI)); break;
 
-           case VIM_COPY_REG:
-               SEND_STRING("\"" SS_DELAY(10) "a" SS_DELAY(10) "y");
-               break;
-
-           case VIM_PASTE_REG:
-               SEND_STRING("\"" SS_DELAY(10) "a" SS_DELAY(10) "p");
-               break;
-
-            case SHIFT_HOME:
-               SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_HOME) SS_DELAY(50) SS_UP(X_LSFT));
-               break;
-
-            case SHIFT_END:
-               SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_END) SS_DELAY(50) SS_UP(X_LSFT));
-            //    SEND_STRING(SS_LSFT(X_END));
-               break;
-
-            case LINE_COPY:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(50) SS_TAP(X_LEFT) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_RIGHT) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) "c" SS_DELAY(50) SS_UP(X_LGUI));
-               break;
-
-            case LINE_COPY_WIN:
-               SEND_STRING(SS_TAP(X_HOME) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_END) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) SS_LCTL("c") SS_DELAY(50) SS_TAP(X_RIGHT));
-               break;
-
-            case LINE_DEL:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(50) SS_TAP(X_LEFT) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_RIGHT) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) "c" SS_DELAY(50) SS_TAP(X_BSPC) SS_DELAY(50) SS_UP(X_LGUI));
-               break;
-
-            case LINE_DEL_WIN:
-               SEND_STRING(SS_TAP(X_END) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_HOME) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) SS_LCTL("c") SS_DELAY(50) SS_TAP(X_BSPC) );
-               break;
-
-            case WIN_LEFT:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_LEFT) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC));
-               break;
-
-            case WIN_RIGHT:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_RIGHT) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC));
-               break;
-
-            case WIN_UP:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_UP) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC));
-               break;
-
-            case WIN_DOWN:
-               SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_DOWN) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC));
-               break;
+        // Windows
+        case SHIFT_HOME: SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_HOME) SS_DELAY(50) SS_UP(X_LSFT)); break;
+        case SHIFT_END: SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_END) SS_DELAY(50) SS_UP(X_LSFT));  break;
+        case LINE_COPY_WIN: SEND_STRING(SS_TAP(X_HOME) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_END) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) SS_LCTL("c") SS_DELAY(50) SS_TAP(X_RIGHT)); break;
+        case LINE_DEL_WIN: SEND_STRING(SS_TAP(X_END) SS_DELAY(50) SS_DOWN(X_LSFT) SS_DELAY(50) SS_TAP(X_HOME) SS_DELAY(50) SS_UP(X_LSFT) SS_DELAY(50) SS_LCTL("c") SS_DELAY(50) SS_TAP(X_BSPC) ); break;
+        case WIN_LEFT: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_LEFT) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC)); break;
+        case WIN_RIGHT: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_RIGHT) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC)); break;
+        case WIN_UP: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_UP) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC)); break;
+        case WIN_DOWN: SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(10) SS_TAP(X_DOWN) SS_DELAY(10) SS_UP(X_LGUI) SS_DELAY(50) SS_TAP(X_ESC)); break;
 
        }
 
     }
-
     tap_dance_action_t *action;
 
     switch (keycode) {
@@ -573,6 +542,32 @@ void LT_reset(tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void LT_WIN_finished(tap_dance_state_t *state, void *user_data) {
+    td_state = cur_dance(state);
+    switch (td_state) {
+        case TD_SINGLE_TAP: register_code16(C(KC_C)); break;
+        case TD_SINGLE_HOLD: layer_on(_LOWER_WIN); break;
+        // case TD_DOUBLE_TAP: register_code(KC_CAPS); break;
+
+        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
+        // Last case is for fast typing. Assuming your key is `f`:
+        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
+        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
+        case TD_DOUBLE_SINGLE_TAP: tap_code16(C(KC_C)); register_code16(C(KC_C)); break;
+        default: break;
+    }
+}
+
+void LT_WIN_reset(tap_dance_state_t *state, void *user_data) {
+    switch (td_state) {
+        case TD_SINGLE_TAP: unregister_code16(C(KC_C)); break;
+        case TD_SINGLE_HOLD: layer_off(_LOWER_WIN); break;
+        // case TD_DOUBLE_TAP: unregister_code(KC_CAPS); break;
+        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
+        case TD_DOUBLE_SINGLE_TAP: unregister_code16(C(KC_C)); break; 
+        default: break;
+    }
+}
 tap_dance_action_t tap_dance_actions[] = {
     //[CTL_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_CAPS),
     [DUAL_QUOTES] = ACTION_TAP_DANCE_TAP_HOLD(KC_QUOT, KC_DOUBLE_QUOTE),
@@ -584,5 +579,6 @@ tap_dance_action_t tap_dance_actions[] = {
     [R_PBR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, R_finished, R_reset),
     [CTL_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, CC_finished, CC_reset),
     [LT_C] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, LT_finished, LT_reset),
+    [LT_C_WIN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, LT_WIN_finished, LT_WIN_reset),
 };
 

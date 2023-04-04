@@ -3,6 +3,7 @@
 // combo_t key_combos[] = {};
 // uint16_t COMBO_LEN = 0;
 
+// macros
 enum custom_keycodes {
     TEST_CODE = SAFE_RANGE,
     PREV_CMD,
@@ -78,6 +79,9 @@ void CC_reset(tap_dance_state_t *state, void *user_data);
 void LT_finished(tap_dance_state_t *state, void *user_data);
 void LT_reset(tap_dance_state_t *state, void *user_data);
 
+void LT_WIN_finished(tap_dance_state_t *state, void *user_data);
+void LT_WIN_reset(tap_dance_state_t *state, void *user_data);
+
 enum layer_number {
   _QWERTY = 0,
   _RAISE,
@@ -93,34 +97,34 @@ enum layer_number {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* QWERTY
- * ,-------------------------------------------------.                    ,------------------------------------------.
- * |  WINDOWS/MAC |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  CAPS |
- * |---------------------+------+------+------+------|                    |------+------+------+------+------+-------|
- * |      Tab     |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  =/+  |
- * |---------------------+------+------+------+------|                    |------+------+------+------+------+-------|
- * |ESC/CTRL/CAPS |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |  ;/: | ENTER |
- * |--------------+------+------+------+------+------|CTRL(C)|    |CTRL(D)|------+------+------+------+------+-------|
- * |    LSHIFT    |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  | /or\ |RShift |
- * `-------------------------------------------------/       /     \      \------------------------------------------'
- *                         | LALT | LGUI | LOWER/ | /BackSP /       \Space \  |RAISE/- |  '/" |CTRL(R)|
- *                         |      |      | DELETE |/       /         \      \ |        |      |       |
- *                         `------------------------------'           '------''-----------------------'
+ * ,-------------------------------------------------.                    ,--------------------------------------------.
+ * |  WINDOWS/MAC |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |INDICATOR|
+ * |---------------------+------+------+------+------|                    |------+------+------+------+------+---------|
+ * |      Tab     |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  =/+    |
+ * |---------------------+------+------+------+------|                    |------+------+------+------+------+---------|
+ * |ESC/CTRL/CAPS |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |  ;/: | ENTER   |
+ * |--------------+------+------+------+------+------|CTRL(R)|    |CTRL(D)|------+------+------+------+------+---------|
+ * |    LSHIFT    |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  | /or\ |RShift   |
+ * `-------------------------------------------------/       /     \      \--------------------------------------------'
+ *                         | LALT | LGUI | LOWER/ | /BackSP /       \Space \  |RAISE/- |  '/" |    |    |
+ *                         |      |      | DELETE |/       /         \      \ |        |      |         |
+ *                         `------------------------------'           '------''-------------------------'
  */
 
  [_QWERTY] = LAYOUT(
-  TO(_QWERTY_WIN),   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_CAPS,
+  TO(_QWERTY_WIN),   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    MAC,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    TD(EQL_PLUS),
   TD(CTL_CAPS),  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    TD(CT_CLN), KC_ENT,
   KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_R),  C(KC_D),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
-                        KC_LALT, KC_LGUI, TD(LT_C), KC_BSPC, KC_SPACE, LT(_RAISE, KC_MINS), TD(DUAL_QUOTES), MAC
+                        KC_LALT, KC_LGUI, TD(LT_C), KC_BSPC, KC_SPACE, LT(_RAISE, KC_MINS), TD(DUAL_QUOTES), KC_PIPE
 
 ),
  [_QWERTY_WIN] = LAYOUT(
-  TO(_QWERTY),   KC_W,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_CAPS,
+  TO(_QWERTY),   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    WINDOWS,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    TD(EQL_PLUS),
   TD(CTL_CAPS),  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    TD(CT_CLN), KC_ENT,
   KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, C(KC_R),  C(KC_D),  KC_N,    KC_M,    KC_COMM, KC_DOT,  TD(DUAL_SLASH),  KC_RSFT,
-                        KC_LALT, KC_LGUI, TD(LT_C_WIN), KC_BSPC, KC_SPACE, LT(_RAISE_WIN, KC_MINS), TD(DUAL_QUOTES), WINDOWS 
+                        KC_LALT, KC_LGUI, TD(LT_C_WIN), KC_BSPC, KC_SPACE, LT(_RAISE_WIN, KC_MINS), TD(DUAL_QUOTES), KC_PIPE 
 
 ),
 
@@ -147,7 +151,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                              _______, _______, _______, _______, LSA(KC_SPACE),  _______, _______, _______
 ),
 [_LOWER_WIN] = LAYOUT(
-  _______, KC_W, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
   KC_AT, KC_TILD, _______, _______, _______, _______,                     LINE_COPY_WIN, C(KC_Z), _______, _______, C(KC_V), _______,
   KC_CIRC, KC_EXLM, KC_HASH, LINE_DEL_WIN, KC_DLR,  KC_PERC,                          LGUI(KC_LEFT), TD(L_PBR), TD(R_PBR), LGUI(KC_RIGHT), _______, _______,
   KC_GRV, KC_ASTR, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), KC_AMPR,  _______, WIN_LEFT, WIN_DOWN, WIN_UP, WIN_RIGHT, C(KC_SLSH),_______,
@@ -178,7 +182,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ), 
 
 [_RAISE_WIN] = LAYOUT(
-  _______, KC_W, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
   _______, TD(DUAL_SLASH), KC_7,   KC_8,   KC_9,  TD(HYPHEN_UNDER),                       RCS(KC_LEFT), LSFT(KC_LEFT), LSFT(KC_RIGHT), RCS(KC_RIGHT), _______, _______,
   _______, KC_ENT,  KC_4,   KC_5,   KC_6,  KC_DOT,                        KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT, C(KC_RIGHT), TEST_CODE,
   _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, C(KC_EQL), C(KC_LEFT), SHIFT_HOME, LSFT(KC_DOWN), LSFT(KC_UP), SHIFT_END, _______, PREV_CMD,
@@ -186,7 +190,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                             
 ),
 /* RAISE
-* ,-----------------------------------------.                    ,-----------------------------------------.
+ * ,-----------------------------------------.                    ,-----------------------------------------.
  * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |                    |  F7  |  F8  |  F9  | F10  | F11  | F12  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
@@ -230,8 +234,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
        switch (keycode) {
 
         // Common
-        case MAC: SEND_STRING("MAC" SS_DELAY(500) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC)); break;
-        case WINDOWS: SEND_STRING("WINDOWS" SS_DELAY(300) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) ); break;
+        case MAC: SEND_STRING("MAC" SS_DELAY(250) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC)); break;
+        case WINDOWS: SEND_STRING("WINDOWS" SS_DELAY(250) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) SS_TAP(X_BSPC) ); break;
         case TEST_CODE: SEND_STRING(SS_LCTL("j") SS_DELAY(50) SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER)); break;
         case PREV_CMD: SEND_STRING(SS_TAP(X_UP) SS_DELAY(50) SS_TAP(X_ENTER)); break;
         case VIM_COPY_REG: SEND_STRING("\"" SS_DELAY(10) "a" SS_DELAY(10) "y"); break;
@@ -325,7 +329,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 };
 
-// ?
+// ??
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         //case KC_LPRN: return 50;

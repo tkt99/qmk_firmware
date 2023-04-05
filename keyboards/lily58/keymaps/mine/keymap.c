@@ -40,9 +40,8 @@ enum {
     L_PBR,
     R_PBR,
     CTL_CAPS,
-    LT_C,
     LT_C_WIN,
-
+    LT_C
 };
 
 typedef enum {
@@ -65,6 +64,7 @@ typedef struct {
 } td_tap_t;
 
 td_state_t cur_dance(tap_dance_state_t *state);
+td_state_t cur_dance2(tap_dance_state_t *state);
 
 // For the x tap dance. Put it here so it can be used in any keymap
 void L_finished(tap_dance_state_t *state, void *user_data);
@@ -86,12 +86,11 @@ enum layer_number {
   _QWERTY = 0,
   _RAISE,
   _LOWER,
+  _ADJUST,
   _QWERTY_WIN,
   _RAISE_WIN,
   _LOWER_WIN,
-  _ADJUST,
   _ADJUST_WIN,
-  _TEST,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -133,11 +132,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------.                    ,--------------------------------------------.
  * |      |      |      |       |      |      |                    |       |       |       |      |       |      |
  * |------+------+------+-------+------+------|                    |-------+-------+-------+------+-------+------|
- * |   @  |   ~  |      |       |      |      |                    |YY(VIM)| U(VIM)|       |      |P(VIM) |      |
+ * |   ^  |      |      |       |      |      |                    |YY(VIM)| U(VIM)|       |      |P(VIM) |      |
  * |------+------+------+------+------+------|                     |-------+-------+-------+------+-------+------|
- * |   ^  |   !  |   #  |DD(VIM)|   $  |   %  |-------.    ,-------|       | (/{/[ | )/}/] |      |       |      |
+ * |   @  |   !  |   #  |DD(VIM)|   $  |   %  |-------.    ,-------|       | (/{/[ | )/}/] |      |       |      |
  * |------+------+------+-------+------+------|   &   |    |       |-------+-------+-------+------+-------+------|
- * |   `  |   *  | UNDO |  CUT  | COPY | PASTE|-------|    |-------|       |       |       |      |COMMENT|      |
+ * |   `  | UNDO |   *  |  CUT  | COPY | PASTE|-------|    |-------|       |       |       |      |COMMENT|      |
  * `-----------------------------------------/       /     \      \----------------------------------------------'
  *                   |      |      |      | /       /       \      \  |      |      |      |
  *                   |      |      |      |/       /         \      \ |      |      |      |
@@ -145,16 +144,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_LOWER] = LAYOUT(
   _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
-  KC_AT, KC_TILD, RCS(KC_W), RCS(KC_E), _______, _______,                     LINE_COPY, LGUI(KC_Z), _______, _______, LGUI(KC_V), _______,
-  KC_CIRC, KC_EXLM, KC_HASH, LINE_DEL, KC_DLR,  KC_PERC,                          C(KC_LEFT), TD(L_PBR), TD(R_PBR), C(KC_RIGHT), _______, LSA(KC_ENTER),
-  KC_GRV, KC_ASTR, LGUI(KC_Z), LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), KC_AMPR,  _______, LSA(KC_H), LSA(KC_J), LSA(KC_K), LSA(KC_L), LGUI(KC_SLSH),_______,
-                             _______, _______, _______, _______, LSA(KC_SPACE),  _______, _______, _______
+  KC_CIRC, _______, RCS(KC_W), RCS(KC_E), KC_TILDE, _______,                     LINE_COPY, LGUI(KC_Z), _______, _______, LGUI(KC_V), _______,
+  KC_AT, KC_EXLM, KC_HASH, LINE_DEL, KC_DLR,  KC_PERC,                          C(KC_LEFT), TD(L_PBR), TD(R_PBR), C(KC_RIGHT), _______, LSA(KC_ENTER),
+  KC_GRV, LGUI(KC_Z), KC_ASTR, LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), KC_AMPR,  LSA(KC_SPACE), LSA(KC_H), LSA(KC_J), LSA(KC_K), LSA(KC_L), LGUI(KC_SLSH),_______,
+                             _______, _______, _______, _______, LGUI(KC_SPACE),  _______, _______, _______
 ),
 [_LOWER_WIN] = LAYOUT(
   _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
-  KC_AT, KC_TILD, _______, _______, _______, _______,                     LINE_COPY_WIN, C(KC_Z), _______, _______, C(KC_V), _______,
-  KC_CIRC, KC_EXLM, KC_HASH, LINE_DEL_WIN, KC_DLR,  KC_PERC,                          LGUI(KC_LEFT), TD(L_PBR), TD(R_PBR), LGUI(KC_RIGHT), _______, _______,
-  KC_GRV, KC_ASTR, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), KC_AMPR,  _______, WIN_LEFT, WIN_DOWN, WIN_UP, WIN_RIGHT, C(KC_SLSH),_______,
+  KC_CIRC, _______, _______, _______, KC_TILDE, _______,                     LINE_COPY_WIN, C(KC_Z), _______, _______, C(KC_V), _______,
+  KC_AT, KC_EXLM, KC_HASH, LINE_DEL_WIN, KC_DLR,  KC_PERC,                          LGUI(KC_LEFT), TD(L_PBR), TD(R_PBR), LGUI(KC_RIGHT), _______, _______,
+  KC_GRV, C(KC_Z), KC_ASTR, C(KC_X), C(KC_C), C(KC_V),  KC_AMPR,  _______, WIN_LEFT, WIN_DOWN, WIN_UP, WIN_RIGHT, C(KC_SLSH),_______,
                              _______, _______, _______, _______, _______,  _______, _______, _______
 ),
 /* RAISE
@@ -176,8 +175,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
   _______, TD(DUAL_SLASH), KC_7,   KC_8,   KC_9,  TD(HYPHEN_UNDER),                       LSA(KC_LEFT), LSFT(KC_LEFT), LSFT(KC_RIGHT), LSA(KC_RIGHT), _______, _______,
   _______, KC_ENT,  KC_4,   KC_5,   KC_6,  KC_DOT,                        KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT, LALT(KC_RIGHT), TEST_CODE,
-  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, C(KC_EQL), LALT(KC_LEFT), LSG(KC_LEFT), LSFT(KC_DOWN), LSFT(KC_UP), LSG(KC_RIGHT), _______, PREV_CMD,
-                             C(KC_PLUS), C(KC_MINS), _______,  LALT(KC_BSPC),  _______,  _______, LGUI(KC_PLUS), LGUI(KC_MINS) 
+  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, KC_DELETE, LALT(KC_LEFT), LSG(KC_LEFT), LSFT(KC_DOWN), LSFT(KC_UP), LSG(KC_RIGHT), _______, PREV_CMD,
+                             C(KC_EQL), C(KC_MINS), _______,  LALT(KC_BSPC),  _______,  _______, LGUI(KC_PLUS), LGUI(KC_MINS) 
                             
 ), 
 
@@ -185,9 +184,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
   _______, TD(DUAL_SLASH), KC_7,   KC_8,   KC_9,  TD(HYPHEN_UNDER),                       RCS(KC_LEFT), LSFT(KC_LEFT), LSFT(KC_RIGHT), RCS(KC_RIGHT), _______, _______,
   _______, KC_ENT,  KC_4,   KC_5,   KC_6,  KC_DOT,                        KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT, C(KC_RIGHT), TEST_CODE,
-  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, C(KC_EQL), C(KC_LEFT), SHIFT_HOME, LSFT(KC_DOWN), LSFT(KC_UP), SHIFT_END, _______, PREV_CMD,
-                             C(KC_PLUS), C(KC_MINS), _______,  C(KC_BSPC),  _______,  _______, LGUI(KC_PLUS), LGUI(KC_MINS) 
-                            
+  _______,   KC_0,  KC_1,   KC_2,   KC_3, KC_BSPC, KC_DELETE, C(KC_LEFT), SHIFT_HOME, LSFT(KC_DOWN), LSFT(KC_UP), SHIFT_END, _______, PREV_CMD,
+                             C(TD(EQL_PLUS)), C(KC_MINS), _______,  C(KC_BSPC),  _______,  _______, LGUI(KC_PLUS), LGUI(KC_MINS) 
+
 ),
 /* RAISE
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -205,18 +204,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT(
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                               KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  XXXXXXX, XXXXXXX, MEH(KC_W), MEH(KC_E), XXXXXXX, XXXXXXX,                         MEH(KC_1), MEH(KC_2), MEH(KC_3), MEH(KC_4), MEH(KC_5), XXXXXXX,
+  XXXXXXX, LGUI(KC_Q), MEH(KC_W), MEH(KC_E), XXXXXXX, XXXXXXX,                         MEH(KC_1), MEH(KC_2), MEH(KC_3), MEH(KC_4), MEH(KC_5), XXXXXXX,
   XXXXXXX, KC_MUTE, KC_MPLY, KC_MPRV, KC_MNXT, XXXXXXX,                             LGUI(KC_LEFT), KC_PGDN, KC_PGUP, LGUI(KC_RIGHT), XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, VIM_COPY_REG, VIM_PASTE_REG, XXXXXXX, XXXXXXX, MEH(KC_H), MEH(KC_J), MEH(KC_K), MEH(KC_L), XXXXXXX, XXXXXXX,
                              KC_BRID, KC_BRIU, _______, _______, _______,  _______, KC_VOLD, KC_VOLU 
   ),
 [_ADJUST_WIN] = LAYOUT(
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                               KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  XXXXXXX, KC_W, LSG(KC_RIGHT), LSG(KC_LEFT), XXXXXXX, XXXXXXX,                         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX, A(KC_F4), LSG(KC_RIGHT), LSG(KC_LEFT), XXXXXXX, XXXXXXX,                         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, KC_MUTE, KC_MPLY, KC_MPRV, KC_MNXT, XXXXXXX,                             KC_HOME, KC_PGDN, KC_PGUP, KC_END, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, VIM_COPY_REG, VIM_PASTE_REG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                              KC_BRID, KC_BRIU, _______, _______, _______,  _______, KC_VOLD, KC_VOLU 
-  ),
+  )
 };
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -263,13 +262,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case TD(CT_CLN):  // list all tap dance keycodes with tap-hold configurations
 
-
             action = &tap_dance_actions[TD_INDEX(keycode)];
             if (!record->event.pressed && action->state.count && !action->state.finished) {
                 tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
                 tap_code16(tap_hold->tap);
             }
-
             break;
 
         case TD(EQL_PLUS):  
@@ -312,17 +309,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
 
             break;
+    }
 
-        case TD(LT_C):  
+    // Shift + Delete
+    mod_state = get_mods();
+    switch (keycode) {
 
-            action = &tap_dance_actions[TD_INDEX(keycode)];
-
-            if (!record->event.pressed && action->state.count && !action->state.finished) {
-                tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
-                tap_code16(tap_hold->tap);
+        case KC_BSPC: {
+            // Initialize a boolean variable that keeps track
+            // of the delete key status: registered or not?
+            static bool delkey_registered;
+            if (record->event.pressed) {
+                // Detect the activation of either shift keys
+                if (mod_state & MOD_MASK_SHIFT) {
+                    // First temporarily canceling both shifts so that
+                    // shift isn't applied to the KC_DEL keycode
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_DEL);
+                    // Update the boolean variable to reflect the status of KC_DEL
+                    delkey_registered = true;
+                    // Reapplying modifier state so that the held shift key(s)
+                    // still work even after having tapped the Backspace/Delete key.
+                    set_mods(mod_state);
+                    return false;
+                }
+            } else { // on release of KC_BSPC
+                // In case KC_DEL is still being sent even after the release of KC_BSPC
+                if (delkey_registered) {
+                    unregister_code(KC_DEL);
+                    delkey_registered = false;
+                    return false;
+                }
             }
+            // Let QMK process the KC_BSPC keycode as usual outside of shift
+            return true;
+        }
 
-            break;
     }
 
     return true;
@@ -332,8 +354,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // ??
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        //case KC_LPRN: return 50;
-        //case KC_RPRN: return 50;
+
         case KC_BACKSLASH: 
             return 499;
         case KC_SLASH: 
@@ -427,6 +448,15 @@ td_state_t cur_dance(tap_dance_state_t *state) {
     else return TD_UNKNOWN;
 }
 
+td_state_t cur_dance2(tap_dance_state_t *state) {
+    if (state->count == 1) {
+        if (!state->pressed) return TD_SINGLE_TAP;
+        else return TD_SINGLE_HOLD;
+    }
+    if (state->count == 2) return TD_DOUBLE_SINGLE_TAP;
+    else return TD_UNKNOWN; // Any number higher than the maximum state value you return above
+}
+
 // Create an instance of 'td_tap_t' for the 'x' tap dance.
 static td_tap_t xtap_state = {
     .is_press_action = true,
@@ -439,11 +469,6 @@ void L_finished(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: register_code16(S(KC_9)); break;
         case TD_SINGLE_HOLD: register_code16(S(KC_LBRC)); break;
         case TD_DOUBLE_TAP: register_code(KC_LBRC); break;
-
-        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
-        // Last case is for fast typing. Assuming your key is `f`:
-        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
-        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
         case TD_DOUBLE_SINGLE_TAP: tap_code16(S(KC_9)); register_code16(S(KC_9)); break;
         default: break;
     }
@@ -454,7 +479,6 @@ void L_reset(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: unregister_code16(S(KC_9)); break;
         case TD_SINGLE_HOLD: unregister_code16(S(KC_LBRC)); break;
         case TD_DOUBLE_TAP: unregister_code(KC_LBRC); break;
-        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code16(S(KC_9)); break;
         default: break;
     }
@@ -467,12 +491,6 @@ void R_finished(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: register_code16(S(KC_0)); break;
         case TD_SINGLE_HOLD: register_code16(S(KC_RBRC)); break;
         case TD_DOUBLE_TAP: register_code(KC_RBRC); break;
-
-        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
-        // Last case is for fast typing. Assuming your key is `f`:
-        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
-        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
-        // case TD_DOUBLE_SINGLE_TAP: tap_code(KC_X); register_code(KC_X); break;
         case TD_DOUBLE_SINGLE_TAP: tap_code16(S(KC_0)); register_code16(S(KC_0)); break;
         default: break;
     }
@@ -483,7 +501,6 @@ void R_reset(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: unregister_code16(S(KC_0)); break;
         case TD_SINGLE_HOLD: unregister_code16(S(KC_RBRC)); break;
         case TD_DOUBLE_TAP: unregister_code(KC_RBRC); break;
-        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code16(S(KC_9)); break; 
         default: break;
     }
@@ -496,13 +513,6 @@ void CC_finished(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: register_code16(KC_ESC); break;
         case TD_SINGLE_HOLD: register_code(KC_LCTL); break;
         case TD_DOUBLE_TAP: register_code(KC_CAPS); break;
-
-        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
-        // Last case is for fast typing. Assuming your key is `f`:
-        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
-        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
-        // case TD_DOUBLE_SINGLE_TAP: tap_code(KC_X); register_code(KC_X); break;
-        //kkcase TD_DOUBLE_SINGLE_TAP: tap_code16(S(KC_0)); register_code16(S(KC_0)); break;
         default: break;
     }
 }
@@ -512,24 +522,16 @@ void CC_reset(tap_dance_state_t *state, void *user_data) {
         case TD_SINGLE_TAP: unregister_code16(KC_ESC); break;
         case TD_SINGLE_HOLD: unregister_code(KC_LCTL); break;
         case TD_DOUBLE_TAP: unregister_code(KC_CAPS); break;
-        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
-        //case TD_DOUBLE_SINGLE_TAP: unregister_code16(S(KC_9)); break; 
         default: break;
     }
     xtap_state.state = TD_NONE;
 }
 
 void LT_finished(tap_dance_state_t *state, void *user_data) {
-    td_state = cur_dance(state);
+    td_state = cur_dance2(state);
     switch (td_state) {
         case TD_SINGLE_TAP: register_code16(C(KC_C)); break;
         case TD_SINGLE_HOLD: layer_on(_LOWER); break;
-        // case TD_DOUBLE_TAP: register_code(KC_CAPS); break;
-
-        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
-        // Last case is for fast typing. Assuming your key is `f`:
-        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
-        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
         case TD_DOUBLE_SINGLE_TAP: tap_code16(C(KC_C)); register_code16(C(KC_C)); break;
         default: break;
     }
@@ -539,24 +541,16 @@ void LT_reset(tap_dance_state_t *state, void *user_data) {
     switch (td_state) {
         case TD_SINGLE_TAP: unregister_code16(C(KC_C)); break;
         case TD_SINGLE_HOLD: layer_off(_LOWER); break;
-        // case TD_DOUBLE_TAP: unregister_code(KC_CAPS); break;
-        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code16(C(KC_C)); break; 
         default: break;
     }
 }
 
 void LT_WIN_finished(tap_dance_state_t *state, void *user_data) {
-    td_state = cur_dance(state);
+    td_state = cur_dance2(state);
     switch (td_state) {
         case TD_SINGLE_TAP: register_code16(C(KC_C)); break;
         case TD_SINGLE_HOLD: layer_on(_LOWER_WIN); break;
-        // case TD_DOUBLE_TAP: register_code(KC_CAPS); break;
-
-        // case TD_DOUBLE_HOLD: register_code(KC_LALT); break;
-        // Last case is for fast typing. Assuming your key is `f`:
-        // For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
-        // In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
         case TD_DOUBLE_SINGLE_TAP: tap_code16(C(KC_C)); register_code16(C(KC_C)); break;
         default: break;
     }
@@ -566,14 +560,11 @@ void LT_WIN_reset(tap_dance_state_t *state, void *user_data) {
     switch (td_state) {
         case TD_SINGLE_TAP: unregister_code16(C(KC_C)); break;
         case TD_SINGLE_HOLD: layer_off(_LOWER_WIN); break;
-        // case TD_DOUBLE_TAP: unregister_code(KC_CAPS); break;
-        // case TD_DOUBLE_HOLD: unregister_code(KC_LALT); break;
         case TD_DOUBLE_SINGLE_TAP: unregister_code16(C(KC_C)); break; 
         default: break;
     }
 }
 tap_dance_action_t tap_dance_actions[] = {
-    //[CTL_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_CAPS),
     [DUAL_QUOTES] = ACTION_TAP_DANCE_TAP_HOLD(KC_QUOT, KC_DOUBLE_QUOTE),
     [DUAL_SLASH] = ACTION_TAP_DANCE_TAP_HOLD(KC_SLSH, KC_BACKSLASH),
     [CT_CLN] = ACTION_TAP_DANCE_TAP_HOLD(KC_SCLN, KC_COLN),
@@ -582,7 +573,7 @@ tap_dance_action_t tap_dance_actions[] = {
     [L_PBR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, L_finished, L_reset),
     [R_PBR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, R_finished, R_reset),
     [CTL_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, CC_finished, CC_reset),
-    [LT_C] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, LT_finished, LT_reset),
     [LT_C_WIN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, LT_WIN_finished, LT_WIN_reset),
+    [LT_C] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, LT_finished, LT_reset)
 };
 
